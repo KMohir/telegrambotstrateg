@@ -28,8 +28,7 @@ async def process_keyword(message: types.Message, state: FSMContext):
                 f"🎬 Video: {video['url']}\n"
                 f"👁 {video['views']:,} views\n"
                 f"❤ {video['likes']:,} likes\n"
-                f"💬 {video['comments']:,} comments\n"
-                f"📈 x{video['growth']} o'sish\n\n"
+                f"💬 {video['comments']:,} comments\n\n"
             )
         
         from keyboards.keyboards import main_menu

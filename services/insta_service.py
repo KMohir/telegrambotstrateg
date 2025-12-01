@@ -1,63 +1,74 @@
 import os
 import requests
 
-RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
+SCRAPECREATORS_API_KEY = os.getenv("SCRAPECREATORS_API_KEY")
 
 async def get_trend_videos(keyword: str):
-    # Using a popular RapidAPI Instagram Scraper (example endpoint)
-    # You might need to adjust the URL and host based on the specific API you choose
-    url = "https://instagram-scraper-2022.p.rapidapi.com/ig/posts_username/" # Placeholder
-    # Realistically, for "trends by keyword", we need a hashtag search or explore endpoint.
-    # Let's assume we use a hashtag search endpoint.
+    """
+    Fetch trending Instagram reels based on keyword using ScrapeCreators API
+    """
+    url = "https://api.scrapecreators.com/v1/instagram/reels/search"
     
-    url = "https://instagram-scraper-2022.p.rapidapi.com/ig/hashtag/"
-    
-    querystring = {"hashtag": keyword}
-
     headers = {
-        "X-RapidAPI-Key": RAPIDAPI_KEY,
-        "X-RapidAPI-Host": "instagram-scraper-2022.p.rapidapi.com"
+        "x-api-key": SCRAPECREATORS_API_KEY
     }
-
+    
+    params = {
+        "query": keyword,
+        "amount": 10  # Get top 10 results
+    }
+    
     try:
-        # response = requests.get(url, headers=headers, params=querystring)
-        # data = response.json()
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
         
-        # Since we don't have a real active key and this is a demo, let's mock the response
-        # to ensure the bot works for the user immediately.
-        # In a real scenario, uncomment the request above.
+        print(f"API Response: {data}")  # Debug logging
         
-        import random
+        # Parse the response and format it for our bot
+        results = []
         
-        mock_data = [
-            {
-                "username": "business_uz",
-                "url": "https://instagram.com/reel/C123456",
-                "views": random.randint(10000, 500000),
-                "likes": random.randint(1000, 50000),
-                "comments": random.randint(100, 5000),
-                "growth": round(random.uniform(1.5, 5.0), 1)
-            },
-            {
-                "username": "marketing_pro",
-                "url": "https://instagram.com/reel/C789012",
-                "views": random.randint(10000, 500000),
-                "likes": random.randint(1000, 50000),
-                "comments": random.randint(100, 5000),
-                "growth": round(random.uniform(1.5, 5.0), 1)
-            },
-             {
-                "username": "trend_hunter",
-                "url": "https://instagram.com/reel/C345678",
-                "views": random.randint(10000, 500000),
-                "likes": random.randint(1000, 50000),
-                "comments": random.randint(100, 5000),
-                "growth": round(random.uniform(1.5, 5.0), 1)
+        # Handle different possible response structures
+        reels_data = []
+        if isinstance(data, dict):
+            if 'data' in data:
+                reels_data = data['data']
+            elif 'reels' in data:
+                reels_data = data['reels']
+            elif 'items' in data:
+                reels_data = data['items']
+            elif 'results' in data:
+                reels_data = data['results']
+        elif isinstance(data, list):
+            reels_data = data
+        
+        for reel in reels_data[:10]:  # Limit to 10 results
+            # Extract relevant information with flexible field names
+            username = reel.get("username") or reel.get("owner", {}).get("username", "Unknown")
+            shortcode = reel.get("code") or reel.get("shortcode") or reel.get("id", "")
+            
+            result = {
+                "username": username,
+                "url": reel.get("url") or reel.get("link") or f"https://instagram.com/reel/{shortcode}",
+                "views": reel.get("play_count") or reel.get("views") or reel.get("view_count", 0),
+                "likes": reel.get("like_count") or reel.get("likes", 0),
+                "comments": reel.get("comment_count") or reel.get("comments", 0),
             }
-        ]
+            
+            # Only add if we have valid data
+            if result["url"]:
+                results.append(result)
         
-        return mock_data
+        return results
         
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching trends from ScrapeCreators API: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Response status: {e.response.status_code}")
+            print(f"Response body: {e.response.text}")
+        return []
     except Exception as e:
-        print(f"Error fetching trends: {e}")
+        print(f"Error parsing ScrapeCreators API response: {e}")
+        import traceback
+        traceback.print_exc()
         return []
