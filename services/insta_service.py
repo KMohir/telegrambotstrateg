@@ -15,7 +15,7 @@ async def get_trend_videos(keyword: str):
     
     params = {
         "query": keyword,
-        "amount": 10  # Get top 10 results
+        "amount": 20  # Get 20 results to sort and filter
     }
     
     try:
@@ -61,7 +61,9 @@ async def get_trend_videos(keyword: str):
             if result["url"]:
                 results.append(result)
         
-        return results
+        # Sort by views (highest first) and return top 10
+        results.sort(key=lambda x: x.get('views', 0), reverse=True)
+        return results[:10]
         
     except requests.exceptions.RequestException as e:
         print(f"Error fetching trends from ScrapeCreators API: {e}")
