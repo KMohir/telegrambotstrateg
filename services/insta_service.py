@@ -54,7 +54,8 @@ async def get_trend_videos(keyword: str):
                 "likes": reel.get("like_count") or reel.get("likes", 0),
                 "comments": reel.get("comment_count") or reel.get("comments", 0),
                 "caption": reel.get("caption", ""),
-                "shortcode": shortcode
+                "shortcode": shortcode,
+                "growth": reel.get("growth_rate", 0)  # Get growth rate from API
             }
             
             # Only add if we have valid data

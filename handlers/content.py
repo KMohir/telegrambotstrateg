@@ -36,7 +36,7 @@ async def regenerate_content(message: types.Message, state: FSMContext):
 # Content generation flow
 @router.message(F.text == "🎥 Kontent yaratish")
 async def start_content_gen(message: types.Message, state: FSMContext):
-    await message.answer("Ajoyib! Kontent yaratish uchun bir nechta savollarga javob bering.\n\n1. Videoning asosiy mavzusi nima?", reply_markup=ReplyKeyboardRemove())
+    await message.answer("Ajoyib! Kontent yaratish uchun bir nechta savollarga javob bering.\n\n1. Qanday mavzuda kontent qilmoqchisiz?", reply_markup=ReplyKeyboardRemove())
     await state.set_state(ContentState.topic)
 
 @router.message(ContentState.topic)

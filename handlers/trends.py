@@ -36,20 +36,27 @@ async def process_keyword(message: types.Message, state: FSMContext):
             views = video.get('views', 0)
             likes = video.get('likes', 0)
             comments = video.get('comments', 0)
+            growth = video.get('growth', 0)
             
-            # Ensure they are integers
+            # Ensure they are integers/floats
             if not isinstance(views, int):
                 views = 0
             if not isinstance(likes, int):
                 likes = 0
             if not isinstance(comments, int):
                 comments = 0
+            if not isinstance(growth, (int, float)):
+                growth = 0
+            
+            # Format growth display
+            growth_text = f"📈 x{growth:.1f} o'sish\n" if growth > 0 else ""
             
             response_text += (
                 f"{i}. 🎬 Video: {video['url']}\n"
                 f"👁 {views:,} views\n"
                 f"❤ {likes:,} likes\n"
-                f"💬 {comments:,} comments\n\n"
+                f"💬 {comments:,} comments\n"
+                f"{growth_text}\n"
             )
             
             # Add button for each video
