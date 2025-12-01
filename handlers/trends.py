@@ -32,12 +32,24 @@ async def process_keyword(message: types.Message, state: FSMContext):
         keyboard_buttons = []
         
         for i, video in enumerate(trends, 1):
+            # Safely get numeric values
+            views = video.get('views', 0)
+            likes = video.get('likes', 0)
+            comments = video.get('comments', 0)
+            
+            # Ensure they are integers
+            if not isinstance(views, int):
+                views = 0
+            if not isinstance(likes, int):
+                likes = 0
+            if not isinstance(comments, int):
+                comments = 0
+            
             response_text += (
-                f"{i}. @{video['username']}\n"
-                f"🎬 Video: {video['url']}\n"
-                f"👁 {video['views']:,} views\n"
-                f"❤ {video['likes']:,} likes\n"
-                f"💬 {video['comments']:,} comments\n\n"
+                f"{i}. 🎬 Video: {video['url']}\n"
+                f"👁 {views:,} views\n"
+                f"❤ {likes:,} likes\n"
+                f"💬 {comments:,} comments\n\n"
             )
             
             # Add button for each video
