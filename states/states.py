@@ -10,4 +10,5 @@ class ContentState(StatesGroup):
 
 class TrendState(StatesGroup):
     keyword = State()     # Kalit so'z
+    analyzing = State()   # Video tahlil qilish
 

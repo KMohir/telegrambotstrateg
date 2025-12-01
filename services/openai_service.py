@@ -39,3 +39,47 @@ async def generate_content_ideas(answers: dict):
         return response.choices[0].message.content
     except Exception as e:
         return f"Xatolik yuz berdi: {str(e)}"
+
+async def analyze_video_caption(caption: str, username: str, views: int, likes: int):
+    """
+    Analyze Instagram video caption and generate content ideas in Uzbek
+    """
+    prompt = f"""
+    Instagram videosini tahlil qilib, o'zbek tilida kontent g'oyasi yaratib ber.
+    
+    Video ma'lumotlari:
+    - Muallif: @{username}
+    - Ko'rishlar: {views:,}
+    - Layklar: {likes:,}
+    - Caption: {caption}
+    
+    Vazifa:
+    Ushbu viral videoni tahlil qilib, o'xshash kontent yaratish uchun quyidagi formatda g'oya ber:
+    
+    **G'oya nomi:** [Qisqa va jozibali nom]
+    
+    **Hook (3 sekundlik ilmoq):** [Tomoshabinni qanday qilib darhol jalb qilish mumkin]
+    
+    **Asosiy qism:** [Video qanday rivojlanishi kerak, asosiy xabar nima]
+    
+    **CTA (Harakatga chaqiruv):** [Tomoshabindan qanday harakat kutiladi]
+    
+    **Qo'shimcha tavsiya:** [Videoni yanada samaraliroq qilish uchun maslahatlar]
+    
+    **Nima uchun bu video viral bo'lgan:** [Qisqacha tahlil]
+    
+    Javobni faqat O'zbek tilida qaytar.
+    """
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Sen Instagram marketing bo'yicha ekspert va viral kontent tahlilchisissan."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Xatolik yuz berdi: {str(e)}"

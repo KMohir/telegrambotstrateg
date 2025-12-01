@@ -50,9 +50,11 @@ async def get_trend_videos(keyword: str):
             result = {
                 "username": username,
                 "url": reel.get("url") or reel.get("link") or f"https://instagram.com/reel/{shortcode}",
-                "views": reel.get("play_count") or reel.get("views") or reel.get("view_count", 0),
+                "views": reel.get("video_view_count") or reel.get("play_count") or reel.get("views") or reel.get("view_count", 0),
                 "likes": reel.get("like_count") or reel.get("likes", 0),
                 "comments": reel.get("comment_count") or reel.get("comments", 0),
+                "caption": reel.get("caption", ""),
+                "shortcode": shortcode
             }
             
             # Only add if we have valid data
